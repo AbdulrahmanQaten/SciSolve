@@ -41,7 +41,7 @@ dependencies:
   google_fonts: ^6.3.0
   flutter_animate: ^4.5.2
   flutter_markdown: ^0.7.7+1
-  flutter_math_fork: 0.7.2
+  flutter_math_fork: 0.7.3
 
   image_picker: ^1.1.2
   cunning_document_scanner: ^1.2.0
