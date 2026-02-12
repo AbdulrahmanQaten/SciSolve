@@ -167,9 +167,9 @@ serve(async (req) => {
     const hasImages = messages.some((m: any) => Array.isArray(m.content));
     let processedMessages = messages;
     let models = [
-      "deepseek-ai/DeepSeek-R1-0528", // PRIMARY: HuggingFace (free)
-      "tngtech/deepseek-r1t2-chimera:free", // BACKUP 1: OpenRouter (free)
-      "deepseek/deepseek-r1-0528:free", // BACKUP 2: OpenRouter (free)
+      "tngtech/deepseek-r1t2-chimera:free",     // PRIMARY: OpenRouter (free, fast)
+      "deepseek/deepseek-r1-0528:free",          // BACKUP 1: OpenRouter (free, strongest)
+      "deepseek/deepseek-r1:free",               // BACKUP 2: OpenRouter (free, stable)
     ];
 
     if (hasImages && hfKey) {
