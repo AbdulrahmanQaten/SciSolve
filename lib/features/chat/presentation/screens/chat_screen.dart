@@ -328,7 +328,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _handleSearch(String query) {
-    if (query.trim().isEmpty) return;
+    if (query.trim().isEmpty && _selectedImage == null) return;
     if (_messages.isEmpty && _currentChatId == null) {
       // Optimistic title set
       setState(() => _customChatTitle =
@@ -588,6 +588,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                             letterSpacing: 0.5))
                                   ])))
                       : ListView.builder(
+                          physics: const BouncingScrollPhysics(),
                           controller: _scrollController,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 20),

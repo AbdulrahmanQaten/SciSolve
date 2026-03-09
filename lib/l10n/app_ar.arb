@@ -1,4 +1,4 @@
-﻿{
+{
   "appTitle": "SciSolve",
   "welcomeMessage": "مرحباً! أنا SciSolve، مساعدك الذكي المتخصص في العلوم والرياضيات.",
   "typeMessage": "اكتب سؤالك أو ارفع صورة...",
@@ -109,8 +109,8 @@
   "planMonthly": "الخطة الشهرية",
   "planYearly": "الخطة السنوية",
   "oneTime": "دفعة لمرة واحدة",
-  "priceMonthly": "7.99$",
-  "priceYearly": "49.99$",
+  "priceMonthly": "3.99$",
+  "priceYearly": "29.99$",
   "bestValue": "أفضل قيمة",
   "savePercent": "وفر 48%",
   "restorePurchases": "استعادة المشتريات",

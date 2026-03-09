@@ -76,7 +76,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     // Features List
                     _buildFeatureItem(l10n.feature1, textColor),
                     _buildFeatureItem(l10n.feature2, textColor),
-                    _buildFeatureItem(l10n.feature5, textColor),
                     _buildFeatureItem(l10n.feature6, textColor),
                     _buildFeatureItem(l10n.feature3, textColor),
                     _buildFeatureItem(l10n.feature4, textColor),

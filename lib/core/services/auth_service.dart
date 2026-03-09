@@ -108,20 +108,14 @@ class AuthService {
     final user = currentUser;
     if (user == null) return;
 
-    final updates = <String, dynamic>{
-      'id': user.id, // Required for upsert
-      // 'updated_at': DateTime.now().toIso8601String(), // Removed: Column missing in DB
-    };
+    final updates = <String, dynamic>{};
     
     if (fullName != null) updates['full_name'] = fullName;
     if (educationLevel != null) updates['education_level'] = educationLevel;
 
-    // Use upsert to create the row if it was missing (e.g. failed trigger)
-    await _supabase.from('profiles').upsert(updates);
-    
-    // Also update Auth Metadata to keep them in sync
-    await _supabase.auth.updateUser(
-      UserAttributes(data: updates)
-    );
+    if (updates.isNotEmpty) {
+      await _supabase.from('profiles').update(updates).eq('id', user.id);
+      await _supabase.auth.updateUser(UserAttributes(data: updates));
+    }
   }
 }

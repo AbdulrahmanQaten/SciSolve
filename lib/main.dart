@@ -6,6 +6,7 @@ import 'package:scisolve/features/onboarding/presentation/screens/onboarding_scr
 import 'package:scisolve/features/auth/presentation/screens/signup_screen.dart';
 import 'package:scisolve/features/auth/presentation/screens/login_screen.dart';
 import 'package:scisolve/features/chat/presentation/screens/chat_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:scisolve/core/constants/supabase_constants.dart';
@@ -95,9 +96,9 @@ class _SciSolveAppState extends State<SciSolveApp> {
       title: 'SciSolve',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        textTheme: GoogleFonts.tajawalTextTheme(ThemeData.light().textTheme),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
         useMaterial3: true,
-        fontFamily: 'Inter',
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
           scrolledUnderElevation: 0,
@@ -105,10 +106,13 @@ class _SciSolveAppState extends State<SciSolveApp> {
         ),
       ),
       darkTheme: ThemeData(
+        textTheme: GoogleFonts.tajawalTextTheme(ThemeData.dark().textTheme).apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        ),
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.white, brightness: Brightness.dark),
         useMaterial3: true,
-        fontFamily: 'Inter',
         scaffoldBackgroundColor: Colors.black,
         appBarTheme: const AppBarTheme(
           scrolledUnderElevation: 0,

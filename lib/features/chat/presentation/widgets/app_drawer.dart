@@ -241,8 +241,6 @@ class _AppDrawerState extends State<AppDrawer> {
     showModalBottomSheet(
         context: context,
         backgroundColor: bgColor,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
         builder: (ctx) {
           return Container(
             padding: const EdgeInsets.all(24),
@@ -262,7 +260,6 @@ class _AppDrawerState extends State<AppDrawer> {
                   trailing: chat.folderId == null
                       ? const Icon(Icons.check, color: Colors.green, size: 16)
                       : null,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   onTap: () async {
                     Navigator.pop(ctx);
                     await _chatService.moveChatToFolder(chat.id, null);
@@ -278,7 +275,6 @@ class _AppDrawerState extends State<AppDrawer> {
                           ? const Icon(Icons.check,
                               color: Colors.green, size: 16)
                           : null,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       onTap: () async {
                         Navigator.pop(ctx);
                         await _chatService.moveChatToFolder(chat.id, f.id);
@@ -342,6 +338,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
     return Drawer(
       backgroundColor: bgDrawer,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       child: Column(
         children: [
           Container(
@@ -367,6 +364,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 // Show skeleton only on first load
                 if (_chatService.isLoading) {
                   return ListView(
+                    physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.all(12),
                     children: [
                       ListTile(
@@ -386,8 +384,6 @@ class _AppDrawerState extends State<AppDrawer> {
                                 color: textPrimary,
                                 fontWeight: FontWeight.bold)),
                         tileColor: isDark ? Colors.white12 : Colors.grey[200],
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
                       ),
                       const SizedBox(height: 24),
                       _buildChatListSkeleton(isDark),
@@ -414,6 +410,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     chats.where((c) => c.folderId == null).toList();
 
                 return ListView(
+                  physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.all(12),
                   children: [
                     ListTile(
@@ -432,8 +429,6 @@ class _AppDrawerState extends State<AppDrawer> {
                           style: TextStyle(
                               color: textPrimary, fontWeight: FontWeight.bold)),
                       tileColor: isDark ? Colors.white12 : Colors.grey[200],
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
                     ),
                     const SizedBox(height: 24),
                     _buildSectionHeader(l10n.sections.toUpperCase(),
@@ -498,7 +493,6 @@ class _AppDrawerState extends State<AppDrawer> {
             decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: dividerColor))),
             child: ListTile(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 leading:
                     FaIcon(FontAwesomeIcons.gear, size: 18, color: textPrimary),
                 title:
@@ -521,7 +515,7 @@ class _AppDrawerState extends State<AppDrawer> {
       decoration: isActive
           ? BoxDecoration(
               color: isDark ? Colors.white10 : Colors.grey[200],
-              borderRadius: BorderRadius.circular(8))
+            )
           : null,
       child: ListTile(
         contentPadding: const EdgeInsets.only(left: 16, right: 8),

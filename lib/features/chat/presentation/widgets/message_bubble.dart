@@ -270,16 +270,6 @@ class MessageBubble extends StatelessWidget {
                             _showProDialog(context);
                           }
                         }),
-                    const SizedBox(width: 16),
-                    _MessageAction(
-                        icon: FontAwesomeIcons.filePdf,
-                        onTap: () {
-                          if (UserManager.isPro) {
-                            SciToast.show(context, l10n.exportPdf);
-                          } else {
-                            _showProDialog(context);
-                          }
-                        }),
                     const SizedBox(width: 32),
                     _MessageAction(
                         icon: Icons.thumb_up_outlined,

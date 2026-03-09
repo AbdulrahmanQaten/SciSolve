@@ -1,4 +1,4 @@
-﻿{
+{
   "appTitle": "SciSolve",
   "welcomeMessage": "Hello! I am SciSolve, your AI specialized in Science and Math.",
   "typeMessage": "Type your question or upload an image...",
@@ -108,8 +108,8 @@
   "planMonthly": "Monthly Plan",
   "planYearly": "Yearly Plan",
   "oneTime": "One Time Payment",
-  "priceMonthly": "$7.99",
-  "priceYearly": "$49.99",
+  "priceMonthly": "$3.99",
+  "priceYearly": "$29.99",
   "bestValue": "Best Value",
   "savePercent": "Save 48%",
   "restorePurchases": "Restore Purchases",

@@ -8,6 +8,7 @@ import 'package:scisolve/features/subscription/presentation/screens/subscription
 import 'edit_profile_screen.dart';
 import 'legal_screen.dart';
 import 'package:scisolve/core/services/auth_service.dart';
+import 'package:scisolve/core/utils/user_manager.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -214,6 +215,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               activeTrackColor: Colors.grey,
             ),
           ),
+          _buildSettingItem(
+              icon: FontAwesomeIcons.brain,
+              title: l10n.aiStyle,
+              textColor: textColor,
+              onTap: () => _showStyleDialog(context, l10n, isDark, textColor)),
           const SizedBox(height: 24),
           _buildSectionHeader(l10n.settingsAccount, textColor),
           _buildSettingItem(
@@ -463,5 +469,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Icon(Icons.arrow_forward_ios,
               size: 14, color: effectiveColor.withOpacity(0.2)),
     );
+  }
+
+  void _showStyleDialog(BuildContext context, AppLocalizations l10n, bool isDark, Color textColor) async {
+    final current = await UserManager.getAIStyle();
+    final bgColor = isDark ? const Color(0xFF141414) : Colors.white;
+
+    if (!context.mounted) return;
+
+    showDialog(
+        context: context,
+        builder: (ctx) => SimpleDialog(
+                backgroundColor: bgColor,
+                title: Text(l10n.chooseStyle, style: TextStyle(color: textColor)),
+                children: [
+                  _buildStyleOption(ctx, l10n.styleDetailed, "detailed", current, textColor, l10n),
+                  _buildStyleOption(ctx, l10n.styleBalanced, "balanced", current, textColor, l10n),
+                  _buildStyleOption(ctx, l10n.styleConcise, "concise", current, textColor, l10n),
+                ]));
+  }
+
+  Widget _buildStyleOption(BuildContext ctx, String label, String value, String current, Color textColor, AppLocalizations l10n) {
+    return SimpleDialogOption(
+        onPressed: () async {
+          await UserManager.setAIStyle(value);
+          if (!ctx.mounted) return;
+          Navigator.pop(ctx);
+          SciToast.show(context, l10n.styleSet(label));
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(children: [
+            Icon(current == value ? Icons.radio_button_checked : Icons.radio_button_off,
+                size: 16, color: textColor),
+            const SizedBox(width: 12),
+            Text(label, style: TextStyle(color: textColor, fontSize: 16))
+          ]),
+        ));
   }
 }
