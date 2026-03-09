@@ -76,20 +76,23 @@ class _AppDrawerState extends State<AppDrawer> {
   void _deleteFolder(ChatFolder folder) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF1F2937);
+
     showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-              backgroundColor: isDark ? const Color(0xFF141414) : Colors.white,
+              backgroundColor: bgColor,
+              elevation: 0, // Flat design
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               title: Text(l10n.deleteFolderConfirm,
-                  style:
-                      TextStyle(color: isDark ? Colors.white : Colors.black)),
+                  style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
               content: Text("All chats inside will be moved to General.",
-                  style: TextStyle(
-                      color: isDark ? Colors.white70 : Colors.black54)),
+                  style: TextStyle(color: isDark ? Colors.white54 : Colors.black54)),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(ctx),
-                    child: Text(l10n.cancel)),
+                    child: Text(l10n.cancel, style: TextStyle(color: isDark ? Colors.white54 : Colors.black54))),
                 TextButton(
                     onPressed: () async {
                       await _chatService.deleteFolder(folder.id);
@@ -104,27 +107,35 @@ class _AppDrawerState extends State<AppDrawer> {
   void _showFolderDialog({ChatFolder? folder}) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF1F2937);
     final controller = TextEditingController(text: folder?.name ?? "");
+
     showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-              backgroundColor: isDark ? const Color(0xFF141414) : Colors.white,
+              backgroundColor: bgColor,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               title: Text(folder == null ? l10n.newSection : l10n.rename,
-                  style:
-                      TextStyle(color: isDark ? Colors.white : Colors.black)),
+                  style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
               content: TextField(
                   controller: controller,
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                  style: TextStyle(color: textColor),
                   autofocus: true,
                   decoration: InputDecoration(
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color:
-                                  isDark ? Colors.white24 : Colors.black12)))),
+                      filled: true,
+                      fillColor: isDark ? const Color(0xFF262626) : const Color(0xFFF9FAFB),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  )),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(ctx),
-                    child: Text(l10n.cancel)),
+                    child: Text(l10n.cancel, style: TextStyle(color: isDark ? Colors.white54 : Colors.black54))),
                 TextButton(
                     onPressed: () async {
                       if (controller.text.isNotEmpty) {
@@ -138,8 +149,7 @@ class _AppDrawerState extends State<AppDrawer> {
                       }
                     },
                     child: Text(folder == null ? l10n.create : l10n.save,
-                        style: TextStyle(
-                            color: isDark ? Colors.white : Colors.black))),
+                        style: TextStyle(color: textColor))),
               ],
             ));
   }
@@ -147,34 +157,41 @@ class _AppDrawerState extends State<AppDrawer> {
   void _renameChat(ChatItem chat) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF1F2937);
     final controller = TextEditingController(text: chat.title);
+
     showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-              backgroundColor: isDark ? const Color(0xFF141414) : Colors.white,
+              backgroundColor: bgColor,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               title: Text(l10n.renameChat,
-                  style:
-                      TextStyle(color: isDark ? Colors.white : Colors.black)),
+                  style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
               content: TextField(
                   controller: controller,
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                  style: TextStyle(color: textColor),
                   decoration: InputDecoration(
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color:
-                                  isDark ? Colors.white24 : Colors.black12)))),
+                      filled: true,
+                      fillColor: isDark ? const Color(0xFF262626) : const Color(0xFFF9FAFB),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  )),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(ctx),
-                    child: Text(l10n.cancel)),
+                    child: Text(l10n.cancel, style: TextStyle(color: isDark ? Colors.white54 : Colors.black54))),
                 TextButton(
                     onPressed: () async {
                       await _chatService.renameChat(chat.id, controller.text);
                       if (ctx.mounted) Navigator.pop(ctx);
                     },
                     child: Text(l10n.save,
-                        style: TextStyle(
-                            color: isDark ? Colors.white : Colors.black))),
+                        style: TextStyle(color: textColor))),
               ],
             ));
   }
@@ -182,17 +199,21 @@ class _AppDrawerState extends State<AppDrawer> {
   void _deleteChat(ChatItem chat) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF1F2937);
+
     showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-              backgroundColor: isDark ? const Color(0xFF141414) : Colors.white,
+              backgroundColor: bgColor,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               title: Text(l10n.deleteChatConfirm,
-                  style:
-                      TextStyle(color: isDark ? Colors.white : Colors.black)),
+                  style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(ctx),
-                    child: Text(l10n.cancel)),
+                    child: Text(l10n.cancel, style: TextStyle(color: isDark ? Colors.white54 : Colors.black54))),
                 TextButton(
                     onPressed: () async {
                       Navigator.pop(ctx);
@@ -214,12 +235,14 @@ class _AppDrawerState extends State<AppDrawer> {
   void _moveChat(ChatItem chat, List<ChatFolder> folders) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF141414) : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
+    final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF1F2937);
 
     showModalBottomSheet(
         context: context,
         backgroundColor: bgColor,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
         builder: (ctx) {
           return Container(
             padding: const EdgeInsets.all(24),
@@ -230,7 +253,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     style: TextStyle(
                         color: textColor,
                         fontSize: 18,
-                        fontWeight: FontWeight.bold)),
+                        fontWeight: FontWeight.w600)),
                 const SizedBox(height: 16),
                 ListTile(
                   leading: Icon(Icons.grid_view,
@@ -239,6 +262,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   trailing: chat.folderId == null
                       ? const Icon(Icons.check, color: Colors.green, size: 16)
                       : null,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   onTap: () async {
                     Navigator.pop(ctx);
                     await _chatService.moveChatToFolder(chat.id, null);
@@ -254,6 +278,7 @@ class _AppDrawerState extends State<AppDrawer> {
                           ? const Icon(Icons.check,
                               color: Colors.green, size: 16)
                           : null,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       onTap: () async {
                         Navigator.pop(ctx);
                         await _chatService.moveChatToFolder(chat.id, f.id);
@@ -306,14 +331,14 @@ class _AppDrawerState extends State<AppDrawer> {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final bgDrawer = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final textSecondary = isDark ? Colors.white : Colors.black;
+    final bgDrawer = isDark ? const Color(0xFF121212) : const Color(0xFFF9FAFB);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF1F2937);
+    final textSecondary = isDark ? Colors.white : const Color(0xFF1F2937);
     final textDisabled = isDark ? Colors.white38 : Colors.black38;
 
     final dividerColor = isDark
-        ? Colors.white.withOpacity(0.05)
-        : Colors.black.withOpacity(0.05);
+        ? Colors.transparent
+        : Colors.transparent; // Minimalist: No dividing lines
 
     return Drawer(
       backgroundColor: bgDrawer,
@@ -325,12 +350,12 @@ class _AppDrawerState extends State<AppDrawer> {
             decoration: BoxDecoration(
                 border: Border(bottom: BorderSide(color: dividerColor))),
             child: Row(children: [
-              FaIcon(FontAwesomeIcons.atom, color: textPrimary, size: 24),
+              FaIcon(FontAwesomeIcons.lightbulb, color: textPrimary, size: 24), // Sparkle/Bulb instead of Atom
               const SizedBox(width: 16),
               Text("SciSolve",
                   style: TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       color: textPrimary))
             ]),
           ),
@@ -473,6 +498,7 @@ class _AppDrawerState extends State<AppDrawer> {
             decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: dividerColor))),
             child: ListTile(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 leading:
                     FaIcon(FontAwesomeIcons.gear, size: 18, color: textPrimary),
                 title:
