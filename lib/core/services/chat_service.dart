@@ -149,9 +149,12 @@ class ChatService extends ChangeNotifier {
     final client = http.Client();
     final request = http.Request('POST', Uri.parse(_functionUrl));
 
+    final session = _supabase.auth.currentSession;
+    final token = session?.accessToken ?? SupabaseConstants.anonKey;
+
     request.headers.addAll({
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${SupabaseConstants.anonKey}',
+      'Authorization': 'Bearer $token',
       'apikey': SupabaseConstants.anonKey,
     });
 

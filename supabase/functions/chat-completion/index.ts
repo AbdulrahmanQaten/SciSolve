@@ -7,78 +7,6 @@ const corsHeaders = {
 };
 
 // ============================================
-// 🔍 STAGE 1: OCR EXTRACTION HELPER
-// ============================================
-async function extractLatexFromImage(
-  messages: any[],
-  hfKey: string
-): Promise<string> {
-  console.log("🔍 OCR Stage: Extracting LaTeX from image...");
-
-  const ocrPrompt = `You are an advanced OCR system specialized in mathematical content extraction.
-
-**TASK**: Extract ALL text and mathematical expressions from the provided image.
-
-**RULES**:
-1. Convert ALL math to LaTeX format (use $ for inline, $$ for block equations).
-2. Preserve the EXACT structure (equations, text, diagrams).
-3. If there are diagrams, describe them briefly in [brackets].
-4. Output ONLY the extracted content. NO explanations, NO extra text.
-5. If the image contains a question, extract it word-for-word.
-
-**OUTPUT FORMAT**:
-Just the extracted LaTeX/text, nothing else.`;
-
-  const ocrMessages = messages.map((msg) => {
-    if (Array.isArray(msg.content)) {
-      // Keep the image for OCR
-      return {
-        role: msg.role ?? (msg.isUser ? "user" : "assistant"),
-        content: msg.content,
-      };
-    } else {
-      return {
-        role: msg.role ?? (msg.isUser ? "user" : "assistant"),
-        content: msg.content,
-      };
-    }
-  });
-
-  // Add OCR instruction as system message
-  ocrMessages.unshift({
-    role: "system",
-    content: ocrPrompt,
-  });
-
-  const apiUrl = "https://router.huggingface.co/v1/chat/completions";
-
-  const response = await fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${hfKey}`,
-    },
-    body: JSON.stringify({
-      model: "Qwen/Qwen2.5-VL-72B-Instruct", // Larger model for better OCR
-      messages: ocrMessages,
-      max_tokens: 2000,
-      temperature: 0.1, // Low temp for accuracy
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`OCR failed: ${error}`);
-  }
-
-  const data = await response.json();
-  const extractedText = data.choices?.[0]?.message?.content || "";
-
-  console.log("✅ OCR Result:", extractedText.substring(0, 200));
-  return extractedText;
-}
-
-// ============================================
 // 🧠 MAIN HANDLER
 // ============================================
 serve(async (req) => {
@@ -162,54 +90,27 @@ serve(async (req) => {
     if (!apiKey) throw new Error("OPENROUTER_API_KEY is not set");
 
     // ============================================
-    // 🔀 ROUTING LOGIC: OCR → DeepSeek Pipeline
+    // 🔀 ROUTING LOGIC: Qwen is primary
     // ============================================
     const hasImages = messages.some((m: any) => Array.isArray(m.content));
     let processedMessages = messages;
+    
     let models = [
-      "tngtech/deepseek-r1t2-chimera:free",     // PRIMARY: OpenRouter (free, fast)
-      "deepseek/deepseek-r1-0528:free",          // BACKUP 1: OpenRouter (free, strongest)
-      "deepseek/deepseek-r1:free",               // BACKUP 2: OpenRouter (free, stable)
+      "Qwen/Qwen2.5-VL-72B-Instruct",           // PRIMARY: HuggingFace (free, handles images and text beautifully)
+      "tngtech/deepseek-r1t2-chimera:free",     // BACKUP 1: OpenRouter (text only, fast)
+      "deepseek/deepseek-r1-0528:free",          // BACKUP 2: OpenRouter (text only, strongest)
     ];
 
-    if (hasImages && hfKey) {
-      try {
-        console.log("🖼️ Image detected → Activating OCR→DeepSeek Pipeline");
-
-        // STAGE 1: Extract LaTeX via Qwen
-        const extractedText = await extractLatexFromImage(messages, hfKey);
-
-        // STAGE 2: Replace image with extracted text
-        processedMessages = messages.map((msg) => {
-          if (Array.isArray(msg.content)) {
-            // Extract original text from multimodal content
-            const originalText =
-              msg.content.find((c: any) => c.type === "text")?.text || "";
-
-            // Combine: Original question + Extracted content from image
-            const combinedContent = originalText
-              ? `${originalText}\n\n[Image Content]:\n${extractedText}`
-              : extractedText;
-
-            return {
-              role: msg.role ?? (msg.isUser ? "user" : "assistant"),
-              content: combinedContent,
-            };
-          }
-          return msg;
-        });
-
-        console.log("✅ Pipeline Ready: Sending to DeepSeek R1");
-      } catch (ocrError) {
-        console.error("⚠️ OCR Failed:", ocrError.message);
-        console.log("🔄 Fallback: Using Qwen for direct solving");
-
-        // Fallback to direct vision model
-        models = [
-          "Qwen/Qwen2.5-VL-72B-Instruct",
-          "Qwen/Qwen2.5-VL-7B-Instruct",
-        ];
-      }
+    if (hasImages && !hfKey) {
+       console.log("⚠️ Images detected but HF_TOKEN missing. Removing image parts for text-only fallbacks.");
+       processedMessages = messages.map((msg) => {
+         if (Array.isArray(msg.content)) {
+           const textContent = msg.content.find((c: any) => c.type === 'text')?.text || "[Image omitted]";
+           return { ...msg, content: textContent };
+         }
+         return msg;
+       });
+       models = models.filter(m => !m.includes('Qwen') || hfKey); // Remove Qwen if no HF key
     }
 
     // ============================================
