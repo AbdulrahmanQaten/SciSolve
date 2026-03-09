@@ -8,8 +8,6 @@ import '../widgets/app_drawer.dart';
 import 'package:scisolve/core/utils/user_manager.dart';
 import 'package:scisolve/features/subscription/presentation/screens/subscription_screen.dart';
 import 'package:scisolve/core/services/chat_service.dart';
-import 'dart:math';
-import 'package:scisolve/core/services/chat_service.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
@@ -179,8 +177,6 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             ));
   }
-
-  ChatFolder? _currentChatFolder; // Track current folder (mock)
 
   void _moveToFolder(AppLocalizations l10n) {
     // ... existing implementation (Folder logic needs update later) ...
@@ -501,8 +497,9 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? Colors.black : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
+    // Elegant, flat minimalist backgrounds
+    final bgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF9FAFB); 
+    final textColor = isDark ? Colors.white : const Color(0xFF1F2937);
     final chatTitle = _customChatTitle ?? l10n.newChat;
 
     return Scaffold(
@@ -512,6 +509,7 @@ class _ChatScreenState extends State<ChatScreen> {
         titleSpacing: 0,
         backgroundColor: bgColor,
         elevation: 0,
+        scrolledUnderElevation: 0, // Prevent Material 3 shadow on scroll
         centerTitle: true,
         iconTheme: IconThemeData(color: textColor),
         title: GestureDetector(
@@ -523,7 +521,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600, // Medium weight for elegance
                         color: textColor))),
             if (_messages.isNotEmpty)
               Padding(
@@ -575,16 +573,19 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    FaIcon(FontAwesomeIcons.atom,
-                                        size: 48,
-                                        color: textColor.withOpacity(0.1)),
+                                    // Elegant, simple icon instead of harsh atom
+                                    FaIcon(FontAwesomeIcons.lightbulb,
+                                        size: 40,
+                                        color: isDark ? Colors.white24 : Colors.black12),
                                     const SizedBox(height: 24),
                                     Text(_getGreeting(l10n),
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                            color: textColor.withOpacity(0.4),
+                                            color: isDark ? Colors.white54 : Colors.black54,
                                             fontSize: 16,
-                                            letterSpacing: 1))
+                                            fontWeight: FontWeight.w400,
+                                            height: 1.5,
+                                            letterSpacing: 0.5))
                                   ])))
                       : ListView.builder(
                           controller: _scrollController,
@@ -644,24 +645,30 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildInputArea(AppLocalizations l10n) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final containerColor = isDark ? const Color(0xFF1A1A1A) : Colors.grey[100];
-    final borderColor =
-        isDark ? Colors.white.withOpacity(0.08) : Colors.black12;
-    final textColor = isDark ? Colors.white : Colors.black;
+    // Flat, clean input area
+    final containerColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF1F2937);
     final hintColor = isDark ? Colors.white38 : Colors.black38;
     final footerColor = isDark ? Colors.white24 : Colors.black38;
+    
+    // Subtle shadow for elegance instead of harsh borders
+    final shadowColor = isDark ? Colors.black26 : Colors.black.withOpacity(0.04);
 
     return Container(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        color: Colors.transparent,
         child: SafeArea(
             child: Column(children: [
           if (_selectedImage != null)
             Container(
               margin: const EdgeInsets.only(bottom: 8),
-              height: 100,
-              width: 100,
+              height: 80,
+              width: 80,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(color: shadowColor, blurRadius: 8, offset: const Offset(0, 4))
+                ],
                 image: DecorationImage(
                     image: kIsWeb
                         ? NetworkImage(_selectedImage!.path)
@@ -672,17 +679,17 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Stack(
                 children: [
                   Positioned(
-                    top: 4,
-                    right: 4,
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedImage = null),
-                      child: Container(
+                    top: -4,
+                    right: -4,
+                    child: IconButton(
+                      icon: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: const BoxDecoration(
                             color: Colors.black54, shape: BoxShape.circle),
                         child: const Icon(Icons.close,
-                            size: 16, color: Colors.white),
+                            size: 14, color: Colors.white),
                       ),
+                      onPressed: () => setState(() => _selectedImage = null),
                     ),
                   )
                 ],
@@ -691,13 +698,16 @@ class _ChatScreenState extends State<ChatScreen> {
           Container(
               decoration: BoxDecoration(
                   color: containerColor,
-                  borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: borderColor)),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(color: shadowColor, blurRadius: 10, offset: const Offset(0, 2))
+                  ]
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
               child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 IconButton(
-                    icon: FaIcon(FontAwesomeIcons.plus,
-                        size: 16, color: hintColor),
+                    icon: FaIcon(FontAwesomeIcons.paperclip, // More elegant than generic plus
+                        size: 18, color: hintColor),
                     onPressed: () => _showAttachmentMenu(l10n)),
                 Expanded(
                     child: ConstrainedBox(
@@ -711,22 +721,24 @@ class _ChatScreenState extends State<ChatScreen> {
                             textInputAction: TextInputAction.send,
                             decoration: InputDecoration(
                                 hintText: l10n.typeMessage,
-                                hintStyle: TextStyle(color: hintColor),
+                                hintStyle: TextStyle(color: hintColor, fontWeight: FontWeight.w400),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 12)),
+                                    horizontal: 8, vertical: 14)),
                             onChanged: (_) => setState(() {})))),
                 Container(
-                    margin: const EdgeInsets.only(bottom: 4, right: 4),
+                    margin: const EdgeInsets.only(bottom: 6, right: 6),
                     decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF333333) : Colors.white,
+                        color: _isGenerating || (_controller.text.isEmpty && _selectedImage == null)
+                            ? Colors.transparent
+                            : (isDark ? Colors.white : Colors.black),
                         shape: BoxShape.circle),
                     child: IconButton(
                         visualDensity: VisualDensity.compact,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(
-                          minWidth: 40,
-                          minHeight: 40,
+                          minWidth: 36,
+                          minHeight: 36,
                         ),
                         onPressed: (_isGenerating ||
                                 (_controller.text.isEmpty &&
@@ -738,13 +750,13 @@ class _ChatScreenState extends State<ChatScreen> {
                                 width: 16,
                                 height: 16,
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: textColor))
+                                    strokeWidth: 2, color: hintColor))
                             : FaIcon(FontAwesomeIcons.arrowUp,
-                                size: 14,
+                                size: 16,
                                 color: (_controller.text.isEmpty &&
                                         _selectedImage == null)
-                                    ? (isDark ? Colors.white38 : Colors.grey)
-                                    : textColor)))
+                                    ? hintColor
+                                    : (isDark ? Colors.black : Colors.white))))
               ])),
           const SizedBox(height: 8),
           Text(l10n.poweredBy,

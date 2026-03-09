@@ -120,9 +120,11 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : Colors.black;
-    // Lighter grey for light mode bubbles to be distinct from bg
-    final bubbleColor = isDark ? const Color(0xFF262626) : Colors.grey[200];
+    final textColor = isDark ? Colors.white : const Color(0xFF1F2937);
+    // Flat, clean elegant bubble color. White in light mode (bg is F9FAFB), dark grey in dark mode.
+    final bubbleColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    // Subtle border for the bubble instead of shadow
+    final borderColor = isDark ? Colors.white10 : Colors.black.withOpacity(0.05);
     final appDirection = Directionality.of(context);
 
     // AI Direction detection based on content
@@ -155,6 +157,7 @@ class MessageBubble extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: bubbleColor,
                   borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: borderColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,8 +226,8 @@ class MessageBubble extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  FaIcon(FontAwesomeIcons.atom,
-                      size: 12, color: textColor.withOpacity(0.7)),
+                  Icon(Icons.auto_awesome, // Elegant sparkle
+                      size: 14, color: isDark ? Colors.white54 : const Color(0xFF6B7280)),
                   const SizedBox(width: 8),
                   Text(l10n.appTitle, // Localized App Name
                       style: TextStyle(
@@ -384,9 +387,9 @@ class MessageBubble extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: isDark ? Colors.white10 : Colors.black12),
+        color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -472,12 +475,12 @@ class MessageBubble extends StatelessWidget {
         children.add(Container(
             width: double.infinity,
             margin: const EdgeInsets.symmetric(vertical: 8),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
-                borderRadius: BorderRadius.circular(8),
+                color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: isDark ? Colors.white10 : Colors.black12)),
+                    color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05))),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Math.tex(
